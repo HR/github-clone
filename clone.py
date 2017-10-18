@@ -5,7 +5,6 @@ import os
 
 
 recursive = True
-# "https://github.com/HR/Crypter/tree/master/build"
 base_url = 'https://api.github.com'
 # /repos/:owner/:repo/git/trees/:sha?recursive=:bool
 tree_endpoint = base_url + '/repos/{}/{}/git/trees/{}?recursive={}'
@@ -67,7 +66,7 @@ def fetch(base_url, path=None):
                 # create dir and then fetch recursively
                 print 'Walking dir: %s' % item['path']
                 path = joinp(path, item['path'])
-                fetch(joinp(base_url, path)
+                fetch(joinp(base_url, path))
             else:
                 # download it
                 # Ensure dir directory exists locally
@@ -76,19 +75,19 @@ def fetch(base_url, path=None):
 
 
 if len(sys.argv) > 1:
-    gh_url=sys.argv[1]
+    gh_url = sys.argv[1]
 else:
     exit_with_m('Nothing to clone :(')
 
 # Normalize & parse input
-norm_gh_url=re.sub(base_normalize_regex, '', gh_url)
-gh_url_comps=norm_gh_url.split('/')
-user, repo=gh_url_comps[:2]
-branch=gh_url_comps[3]
-path=joinp(gh_url_comps[4:])
+norm_gh_url = re.sub(base_normalize_regex, '', gh_url)
+gh_url_comps = norm_gh_url.split('/')
+user, repo = gh_url_comps[:2]
+branch = gh_url_comps[3]
+path = joinp(gh_url_comps[4:])
 
 
-api_req_url=contents_endpoint.format(user, repo)
+api_req_url = contents_endpoint.format(user, repo)
 
 print "Fetching sub repo %s..." % (api_req_url)
 
