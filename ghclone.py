@@ -4,16 +4,16 @@
 GitHub clone (git.io/ghclone)
 
 Usage:
-  ghclone.py <url> [-t | --token=<token>]
-  ghclone.py (-h | --help)
-  ghclone.py (-v | --version)
+  ghclone <url> [-t | --token=<token>]
+  ghclone (-h | --help)
+  ghclone (-v | --version)
 
 Examples:
-  ghclone.py https://github.com/HR/Crypter/tree/master/app
-  ghclone.py https://github.com/HR/Crypter/tree/dev/app
-  ghclone.py https://github.com/HR/Crypter/tree/v3.1.0/build
-  ghclone.py https://github.com/HR/Crypter/tree/cbee54dd720bb8aaa3a2111fcec667ca5f700510/build
-  ghclone.py https://github.com/HR/Picturesque/tree/master/app/src -t li50d67757gm20556d53f08126215725a698560b
+  ghclone https://github.com/HR/Crypter/tree/master/app
+  ghclone https://github.com/HR/Crypter/tree/dev/app
+  ghclone https://github.com/HR/Crypter/tree/v3.1.0/build
+  ghclone https://github.com/HR/Crypter/tree/cbee54dd720bb8aaa3a2111fcec667ca5f700510/build
+  ghclone https://github.com/HR/Picturesque/tree/master/app/src -t li50d67757gm20556d53f08126215725a698560b
 
 Options:
   -h --help           Show this screen.
