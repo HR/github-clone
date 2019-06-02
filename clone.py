@@ -27,7 +27,6 @@ def clone_file(download_url, file_path):
     """
     Clones the file at the download_url to the file_path
     """
-    print('Cloning file', file_path)
     r = requests.get(download_url, stream=True)
     try:
         r.raise_for_status()
@@ -38,14 +37,13 @@ def clone_file(download_url, file_path):
         for chunk in r.iter_content(chunk_size=128):
             fd.write(chunk)
 
-def clone(base_url, path=None):
+def clone(base_url, path=None, ref=None):
     """
     Recursively clones the path
     """
-    print('Cloning directory', path)
     req_url = base_url if not path else os.path.join(base_url, path)
     # Get path metadata
-    r = requests.get(req_url)
+    r = requests.get(req_url) if not ref else requests.get(req_url, params={'ref': ref})
     try:
         r.raise_for_status()
     except Exception as e:
@@ -60,10 +58,11 @@ def clone(base_url, path=None):
         for item in repo_data:
             if item['type'] == 'dir':
                 # Fetch dir recursively
-                clone(base_url, item['path'])
+                clone(base_url, item['path'], ref)
             else:
                 # Fetch the file
                 clone_file(item['download_url'], item['path'])
+                print('Cloned', item['path'])
 
 
 ###
@@ -77,12 +76,12 @@ if arg_len >= 2:
     normal_gh_url = re.sub(BASE_NORMALIZE_REGEX, '', gh_url).replace('/tree', '')
     gh_url_comps = normal_gh_url.split('/')
     user, repo = gh_url_comps[:2]
-    branch = gh_url_comps[2]
+    ref = gh_url_comps[2]
     path = os.path.join(*gh_url_comps[3:])
 else:
     exit_with_m('Nothing to clone :(')
 
 api_req_url = GH_REPO_CONTENTS_ENDPOINT.format(user, repo)
 print("Cloning into '%s'..." % path)
-clone(api_req_url, path)
+clone(api_req_url, path, ref)
 print("done.")
