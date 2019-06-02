@@ -6,4 +6,4 @@ name = "pypi"
 [dev-packages]
 
 [packages]
-requests = "*"
+requests = ">=2.20.0"
