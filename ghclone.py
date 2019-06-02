@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- encoding: utf-8
 """
 GitHub clone (git.io/ghclone)
 
@@ -22,23 +24,22 @@ Options:
 """
 import requests
 import re
-import sys
 import os
 import errno
+from sys import exit
 from docopt import docopt
 
-VERSION = '1.0.0'
+__version__ = '1.0.0'
 GH_API_BASE_URL = 'https://api.github.com'
 GH_REPO_CONTENTS_ENDPOINT = GH_API_BASE_URL + '/repos/{}/{}/contents'
 BASE_NORMALIZE_REGEX = re.compile(r'.*github\.com\/')
 
-verbose = False
 req = requests.Session()
-req.headers.update({'User-Agent': 'git.io/ghclone '+VERSION})
+req.headers.update({'User-Agent': 'git.io/ghclone '+__version__})
 
 def exit_with_m(m='An error occured'):
     print(m)
-    sys.exit(1)
+    exit(1)
 
 def mkdir_p(path):
     try:
@@ -94,11 +95,11 @@ def clone(base_url, path=None, ref=None):
 ###
 # Main
 ###
-if __name__ == '__main__':
+def main():
     arguments = docopt(__doc__)
     if arguments['--version']:
-        print(VERSION)
-        sys.exit(0)
+        print(__version__)
+        exit(0)
 
     # Get params
     gh_url = arguments['<url>']
@@ -115,3 +116,6 @@ if __name__ == '__main__':
     print("Cloning into '%s'..." % path)
     clone(api_req_url, path, ref)
     print("done.")
+
+if __name__ == '__main__':
+    main()

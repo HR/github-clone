@@ -1,5 +1,5 @@
 # GitHub clone
-Git clone sub-directories of a GitHub repository (at any reference) without having to clone the entire repository.
+Git clone any sub-directories of any GitHub repository (at any reference) without having to clone the entire repository.
 Uses the GitHub API to recursively clone the sub-directories tree and files.
 
 # Rate limit
