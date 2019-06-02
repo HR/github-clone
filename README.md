@@ -2,10 +2,10 @@
 Git clone any sub-directories of any GitHub repository (at any reference) without having to clone the entire repository.
 Uses the GitHub API to recursively clone the sub-directories tree and files.
 
-# Rate limit
+## Rate limit
 The GitHub API imposes a [rate limiting](https://developer.github.com/v3/#rate-limiting) of up to 60 requests per hour applies but can be increased to up to 5000 requests per hour using an _OAuth token_ (to get one see https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line).
 
-# Private repositories
+## Private repositories
 To clone private repositories you need to supply an _OAuth token_ for an account with access to the private repository (to get one see https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line).
 
 # Installation
