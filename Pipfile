@@ -7,3 +7,4 @@ name = "pypi"
 
 [packages]
 requests = ">=2.20.0"
+docopt = "*"
