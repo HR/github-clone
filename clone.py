@@ -2,93 +2,87 @@ import requests
 import re
 import sys
 import os
+import errno
 
 
-recursive = True
-base_url = 'https://api.github.com'
-# /repos/:owner/:repo/git/trees/:sha?recursive=:bool
-tree_endpoint = base_url + '/repos/{}/{}/git/trees/{}?recursive={}'
-contents_endpoint = base_url + '/repos/{}/{}/contents'
-commits_endpoint = base_url + '/repos/{}/{}/commits'
-base_normalize_regex = re.compile(r'.*github\.com\/')
+GH_API_BASE_URL = 'https://api.github.com'
+GH_REPO_CONTENTS_ENDPOINT = GH_API_BASE_URL + '/repos/{}/{}/contents'
+BASE_NORMALIZE_REGEX = re.compile(r'.*github\.com\/')
 
 
 def exit_with_m(m='An error occured'):
-    print m
-    sys.exit()
-
-
-def joinp(*args):
-    '/'.join(args)
-
+    print(m)
+    sys.exit(1)
 
 def mkdir_p(path):
     try:
         os.makedirs(path)
-    except OSError as exc:  # Python >2.5
-        if exc.errno == errno.EEXIST and os.path.isdir(path):
+    except OSError as err:  # Python >2.5
+        if err.errno == errno.EEXIST and os.path.isdir(path):
             pass
         else:
             raise
 
-
-def fetch_file(req_url, file_path):
-    r = requests.get(req_url, stream=True)
+def clone_file(download_url, file_path):
+    """
+    Clones the file at the download_url to the file_path
+    """
+    print('Cloning file', file_path)
+    r = requests.get(download_url, stream=True)
     try:
         r.raise_for_status()
     except Exception as e:
-        exit_with_m('Failed fetching ' + req_url, e)
+        exit_with_m('Failed cloneing ' + download_url, e)
 
     with open(file_path, 'wb') as fd:
-        for chunk in req.iter_content(chunk_size=128):
+        for chunk in r.iter_content(chunk_size=128):
             fd.write(chunk)
 
-
-def fetch(base_url, path=None):
+def clone(base_url, path=None):
     """
-    Recursively fetch the repo metadata
+    Recursively clones the path
     """
-    req_url = base_url if not path else joinp(base_url, path)
-    # Request
+    print('Cloning directory', path)
+    req_url = base_url if not path else os.path.join(base_url, path)
+    # Get path metadata
     r = requests.get(req_url)
-
     try:
         r.raise_for_status()
     except Exception as e:
-        exit_with_m('Failed fetching repo metdata: ', e)
-
+        exit_with_m('Failed fetching metadata of dir: ', e)
     repo_data = r.json()
 
+    # Create path locally
+    mkdir_p(path)
+
     if isinstance(repo_data, list):
-        # Recursively fetch content
+        # Recursively clone content
         for item in repo_data:
             if item['type'] == 'dir':
-                # create dir and then fetch recursively
-                print 'Walking dir: %s' % item['path']
-                path = joinp(path, item['path'])
-                fetch(joinp(base_url, path))
+                # Fetch dir recursively
+                clone(base_url, item['path'])
             else:
-                # download it
-                # Ensure dir directory exists locally
-                mkdir_p(path)
-                print 'Fetching file: %s' % item['path']
+                # Fetch the file
+                clone_file(item['download_url'], item['path'])
 
 
-if len(sys.argv) > 1:
+###
+# Main
+###
+arg_len = len(sys.argv)
+if arg_len >= 2:
+    # Github URL
     gh_url = sys.argv[1]
+    # Normalize & parse input
+    normal_gh_url = re.sub(BASE_NORMALIZE_REGEX, '', gh_url).replace('/tree', '')
+    gh_url_comps = normal_gh_url.split('/')
+    user, repo = gh_url_comps[:2]
+    branch = gh_url_comps[2]
+    path = os.path.join(*gh_url_comps[3:])
 else:
     exit_with_m('Nothing to clone :(')
 
-# Normalize & parse input
-norm_gh_url = re.sub(base_normalize_regex, '', gh_url)
-gh_url_comps = norm_gh_url.split('/')
-user, repo = gh_url_comps[:2]
-branch = gh_url_comps[3]
-path = joinp(gh_url_comps[4:])
-
-
-api_req_url = contents_endpoint.format(user, repo)
-
-print "Fetching sub repo %s..." % (api_req_url)
-
-fetch(api_req_url, path)
+api_req_url = GH_REPO_CONTENTS_ENDPOINT.format(user, repo)
+print("Cloning into '%s'..." % path)
+clone(api_req_url, path)
+print("done.")
