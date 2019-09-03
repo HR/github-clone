@@ -31,7 +31,6 @@ from docopt import docopt
 
 __version__ = '1.1.0'
 GH_API_BASE_URL = 'https://api.github.com'
-GH_REPO_ENDPOINT = GH_API_BASE_URL + '/repos/{}/{}'
 GH_REPO_CONTENTS_ENDPOINT = GH_API_BASE_URL + '/repos/{}/{}/contents'
 BASE_NORMALIZE_REGEX = re.compile(r'.*github\.com\/')
 
@@ -69,16 +68,11 @@ def clone_file(download_url, file_path):
             fd.write(chunk)
 
 
-def clone(base_url, path=None, ref=None):
+def clone(base_url, rel_url=None, path=None, ref=None):
     """
     Recursively clones the path
     """
-    if path:
-        req_url = os.path.join(base_url, path)
-        # Create path locally
-        mkdir_p(path)
-    else:
-        req_url = base_url
+    req_url = os.path.join(base_url, rel_url) if rel_url else base_url
 
     # Get path metadata
     r = req.get(req_url) if not ref else req.get(req_url, params={'ref': ref})
@@ -92,11 +86,24 @@ def clone(base_url, path=None, ref=None):
     for item in repo_data:
         if item['type'] == 'dir':
             # Fetch dir recursively
-            clone(base_url, item['path'], ref)
+            clone(base_url, item['path'], path, ref)
         else:
             # Fetch the file
-            clone_file(item['download_url'], item['path'])
+            new_file_path = resolve_path(item['path'], path)
+            new_path = os.path.dirname(new_file_path)
+            # Create path locally
+            mkdir_p(new_path)
+            # Download the file
+            clone_file(item['download_url'], new_file_path)
             # print('Cloned', item['path'])
+
+
+def resolve_path(path, dir):
+    index = path.find(dir)
+    if index is -1:
+        return os.path.join(dir, path)
+    else:
+        return path[index:]
 
 
 ###
@@ -122,19 +129,18 @@ def main():
     if len(gh_args) > 2:
         # Clone subdirectory
         ref = gh_args[2]
-        path = os.path.join(*gh_args[3:])
-        print("Cloning into '%s'..." % path)
+        rel_url = os.path.join(*gh_args[3:])
+        path = gh_args[-1]
     else:
         # Clone entire repo
-        mkdir_p(repo)
-        os.chdir(repo)
         ref = None
-        path = None
-        print("Cloning into '%s'..." % repo)
+        rel_url = None
+        path = repo
 
     api_req_url = GH_REPO_CONTENTS_ENDPOINT.format(user, repo)
 
-    clone(api_req_url, path, ref)
+    print("Cloning into '%s'..." % path)
+    clone(api_req_url, rel_url, path, ref)
     print("done.")
 
 
