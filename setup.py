@@ -8,7 +8,7 @@ from setuptools import find_packages, setup
 
 
 version_regex = r'__version__ = ["\']([^"\']*)["\']'
-with open('ghclone.py',) as f:
+with open('ghclone/ghclone.py',) as f:
     text = f.read()
     match = re.search(version_regex, text)
 
@@ -28,6 +28,7 @@ long_description = codecs.open(README, encoding='utf-8').read()
 
 setup(
     name='ghclone',
+    packages=['ghclone'],
     version=version,
     description='A script for cloning any sub-directories of any GitHub repository',
     long_description=long_description,
@@ -51,7 +52,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'ghclone=ghclone:main',
+            'ghclone=ghclone.ghclone:main',
         ],
     },
 )
