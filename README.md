@@ -11,11 +11,11 @@ To clone private repositories you need to supply an _OAuth token_ for an account
 # Installation
 Install the script via the `pip`:
 ```
-pip install -e git+git://github.com/HR/github-clone#egg=ghclone
+pip install git+git://github.com/HR/github-clone#egg=ghclone
 ```
 or via `pipsi`:
 ```
-pipsi install -e git+git://github.com/HR/github-clone#egg=ghclone
+pipsi install git+git://github.com/HR/github-clone#egg=ghclone
 ```
 Uses Python 3.3+
 
@@ -40,4 +40,18 @@ Options:
   -v --version        Show version.
   -t --token=<token>  Set a GitHub OAuth token (see https://developer.github.com/v3/#rate-limiting).
 ```
+# License
+Copyright (C) 2019 Habib Rehman (https://git.io/HR)
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 
