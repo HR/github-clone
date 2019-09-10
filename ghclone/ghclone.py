@@ -29,7 +29,7 @@ import errno
 from sys import exit
 from docopt import docopt
 
-__version__ = '1.1.0'
+__version__ = '1.2.0'
 GH_API_BASE_URL = 'https://api.github.com'
 GH_REPO_CONTENTS_ENDPOINT = GH_API_BASE_URL + '/repos/{}/{}/contents'
 BASE_NORMALIZE_REGEX = re.compile(r'.*github\.com\/')
@@ -61,7 +61,7 @@ def clone_file(download_url, file_path):
     try:
         r.raise_for_status()
     except Exception as e:
-        exit_with_m('Failed to clone ' + download_url, e)
+        exit_with_m('Failed to clone ' + download_url)
 
     with open(file_path, 'wb') as fd:
         for chunk in r.iter_content(chunk_size=128):
@@ -72,14 +72,14 @@ def clone(base_url, rel_url=None, path=None, ref=None):
     """
     Recursively clones the path
     """
-    req_url = os.path.join(base_url, rel_url) if rel_url else base_url
+    req_url = base_url + '/' + rel_url if rel_url else base_url
 
     # Get path metadata
     r = req.get(req_url) if not ref else req.get(req_url, params={'ref': ref})
     try:
         r.raise_for_status()
     except Exception as e:
-        exit_with_m('Failed to fetch metadata for ' + path, e)
+        exit_with_m('Failed to fetch metadata for ' + path)
     repo_data = r.json()
 
     # Recursively clone content
@@ -101,9 +101,9 @@ def clone(base_url, rel_url=None, path=None, ref=None):
 def resolve_path(path, dir):
     index = path.find(dir)
     if index is -1:
-        return os.path.join(dir, path)
+        return os.path.abspath(os.path.join(dir, path))
     else:
-        return path[index:]
+        return os.path.abspath(path[index:])
 
 
 ###
@@ -121,21 +121,28 @@ def main():
     if token:
         req.headers.update({'Authorization': 'token ' + token[0]})
     # Normalize & parse input
-    normal_gh_url = re.sub(BASE_NORMALIZE_REGEX, '',
-                           gh_url).replace('/tree', '')
-    gh_args = normal_gh_url.split('/')
-    user, repo = gh_args[:2]
+    normal_gh_url = re.sub(BASE_NORMALIZE_REGEX, '', gh_url)
+    gh_args = normal_gh_url.replace('/tree', '').split('/')
 
-    if len(gh_args) > 2:
-        # Clone subdirectory
+    if len(gh_args) < 2 or normal_gh_url == gh_url:
+        exit_with_m('Invalid GitHub URI')
+
+    user, repo = gh_args[:2]
+    ref = None
+    rel_url = None
+
+    if len(gh_args) >= 2:
+        # Clone entire repo
+        path = repo
+
+    if len(gh_args) >= 3:
+        # Clone entire repo at the branch
         ref = gh_args[2]
+
+    if len(gh_args) >= 4:
+        # Clone subdirectory
         rel_url = os.path.join(*gh_args[3:])
         path = gh_args[-1]
-    else:
-        # Clone entire repo
-        ref = None
-        rel_url = None
-        path = repo
 
     api_req_url = GH_REPO_CONTENTS_ENDPOINT.format(user, repo)
 
