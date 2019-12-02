@@ -5,7 +5,7 @@ Uses the GitHub API to recursively clone the sub-directories tree and files.
 ## Rate limit
 The GitHub API imposes a [rate limiting](https://developer.github.com/v3/#rate-limiting) of up to 60 requests per hour applies but can be increased to up to 5000 requests per hour using an _OAuth token_ (to get one see https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line). 
 
-GitHub clone makes an initial request to fetch repo metadata and then, a request for every subfolder in the repo. The request to download the files within the folders are not counted against the rate limit so in most cases (i.e. the folder/repo you're trying to clone has less than 60 subfolders) the rate limit should not be a problem.
+GitHub clone makes an initial request to fetch repo metadata and then, a request for every subfolder in the repo. The requests to download the files within the folders are not counted against the rate limit so in most cases (i.e. the folder/repo you're trying to clone has less than 60 subfolders) the rate limit should not be a problem.
 
 ## Private repositories
 To clone private repositories you need to supply an _OAuth token_ for an account with access to the private repository (to get one see https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line).
