@@ -1,6 +1,10 @@
 # GitHub clone
-Git clone any sub-directories of any GitHub repository (at any reference) without having to clone the entire repository.
+Git clone (download) any sub-directories of any GitHub repository (at any reference) without having to clone the entire repository, with only its GitHub URL.
 Uses the GitHub API to recursively clone the sub-directories tree and files.
+
+## Motivation
+
+I often find myself wanting to only download a certain directory, path or package of an especially big repo that I'm currently viewing (without even cloning the entire repo at depth 1) and to do so by simply copy & pasting the GitHub URL so that's why. Probably more instances where this might come in handy ;)
 
 ## Rate limit
 The GitHub API imposes a [rate limiting](https://developer.github.com/v3/#rate-limiting) of up to 60 requests per hour applies but can be increased to up to 5000 requests per hour using an _OAuth token_ (to get one see https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line). 
@@ -43,7 +47,7 @@ Options:
   -t --token=<token>  Set a GitHub OAuth token (see https://developer.github.com/v3/#rate-limiting).
 ```
 # License
-Copyright (C) 2019 Habib Rehman (https://git.io/HR)
+Copyright (C) 2019-2021 Habib Rehman (https://git.io/HR)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
