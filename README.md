@@ -17,11 +17,11 @@ To clone private repositories you need to supply an _OAuth token_ for an account
 # Installation
 Install the script via the `pip`:
 ```
-pip install git+git://github.com/HR/github-clone#egg=ghclone
+pip install github-clone
 ```
 or via `pipsi`:
 ```
-pipsi install git+git://github.com/HR/github-clone#egg=ghclone
+pipsi install github-clone
 ```
 Uses Python 3.3+
 
