@@ -18,7 +18,10 @@ GitHub clone makes an initial request to fetch repo metadata and then, a request
 To clone private repositories you need to supply an _OAuth token_ for an account with access to the private repository (to get one see https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line).
 
 # Installation
-Install the script via the `pip`:
+
+Available on PyPi https://pypi.org/project/github-clone/.
+
+Install the script via `pip`:
 ```
 pip install github-clone
 ```
