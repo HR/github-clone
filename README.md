@@ -1,4 +1,7 @@
 # GitHub clone
+
+[![PyPi Downloads](https://img.shields.io/pypi/dm/github-clone.svg?style=for-the-badge&logo=pypi)](https://pypi.org/project/github-clone/)
+
 Git clone (download) any sub-directories of any GitHub repository (at any reference) without having to clone the entire repository, with only its GitHub URL.
 Uses the GitHub API to recursively clone the sub-directories tree and files.
 
